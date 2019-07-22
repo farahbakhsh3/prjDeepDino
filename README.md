@@ -2,7 +2,7 @@
 
 1: in google chrome open this url: chrome://dino/
 
-2: in prepare.py fiel set IMG_Crop_X, IMG_Crop_Y with your systems settings. this settings effected on images that grab from screen. (grabed images should be same as samples.)
+2: in prepare.py file set IMG_Crop_X, IMG_Crop_Y with your systems settings. this settings effected on images that grab from screen. (grabed images should be same as samples.)
 
 3: run CaptScr.py and play dino 
 
