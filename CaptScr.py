@@ -1,17 +1,16 @@
 import os
 import datetime
 import keyboard
-import numpy as np
-from time import sleep
 from PIL import ImageGrab
-from skimage.io import imsave
-from Prepare import model_def, Sample
+from Prepare import ModelDef, Sample
 
-class Key:
+
+class Keyb:
     def __init__(self):
         self.counter = 0
         self.i = 0
-key = Key()
+key = Keyb()
+
 
 def datatime_fldr_name():
     now = datetime.datetime.now()
@@ -28,31 +27,40 @@ def datatime_fldr_name():
     if len(s) == 1: s = '0' + s
     return y + m + d + '_' + h + mi + s + '/'
 
+
 def key_pressed():
-    print('key_pressed : Start')
+    print('Press Space key to start...')
+    print()
+    keyboard.wait('space')
     while 1:
+        screen = img_grab()
         if keyboard.is_pressed('up'):
-            capture1('1.U')
+            capture(screen, '1.U')
         elif keyboard.is_pressed('down'):
-            capture1('2.D')
-        elif keyboard.is_pressed('ctrl+c'):
-            break
+            capture(screen, '2.D')
+        # elif keyboard.is_pressed('ctrl+c'):
+        #     break
         else:
-            if key.counter >= 1000:
-                capture1('0.N')
+            if key.counter >= 0:
+                screen = img_grab()
+                capture(screen, '0.N')
                 key.counter = 0
             else:
                 key.counter += 1
 
-def capture1(_key):
-    screen = ImageGrab.grab(bbox=(Sample.IMG_Crop_Y[0],
-                                  Sample.IMG_Crop_X[0],
-                                  Sample.IMG_Crop_Y[1],
-                                  Sample.IMG_Crop_X[1]))
+
+def img_grab():
+    return ImageGrab.grab(bbox=(Sample.IMG_Crop_Y[0],
+                                Sample.IMG_Crop_X[0],
+                                Sample.IMG_Crop_Y[1],
+                                Sample.IMG_Crop_X[1]))
+
+def capture(screen, _key):
     key.i += 1
     fName = img_folders_path + str2(key.i) + '.' + _key + '.jpg'
     print(fName, ': saved.')
     screen.save(fName, format='JPEG')
+
 
 def str2(i):
     if i < 10:
@@ -68,8 +76,9 @@ def str2(i):
     else:
         return str(i)
 
+
 if __name__ == '__main__':
-    m_model_def = model_def()
+    m_model_def = ModelDef()
     data_folders_path = m_model_def.data_fldr
     if not os.path.exists(data_folders_path):
         os.mkdir(data_folders_path)
@@ -83,4 +92,3 @@ if __name__ == '__main__':
     print('-----------------')
     print('Process finished.')
     print(key.i, 'images saved in ', img_folders_path)
-

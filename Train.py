@@ -1,6 +1,6 @@
 import numpy as np
 import tensorflow as tf
-from Prepare import model_def
+from Prepare import ModelDef
 import matplotlib.pyplot as plt
 
 
@@ -9,29 +9,30 @@ def create_model_Conv2D(INPUT_SHAPE, OUT_SHAPE, dropout_prob=0.3):
 
     model.add(tf.keras.layers.BatchNormalization(input_shape=INPUT_SHAPE))
 
-    model.add(tf.keras.layers.Conv2D(8, kernel_size=(3, 3), padding='same', activation='relu'))
+    model.add(tf.keras.layers.Conv2D(8, kernel_size=(3, 3), strides= (2, 2),
+                                     padding='same', activation='relu'))
     model.add(tf.keras.layers.MaxPool2D(pool_size=(2, 2)))
-    #     model.add(tf.keras.layers.BatchNormalization())
-    model.add(tf.keras.layers.Dropout(dropout_prob))
 
-    model.add(tf.keras.layers.Conv2D(16, kernel_size=(3, 3), padding='same', activation='relu'))
+    model.add(tf.keras.layers.Conv2D(16, kernel_size=(3, 3),
+                                     padding='same', activation='relu'))
     model.add(tf.keras.layers.MaxPool2D(pool_size=(2, 2)))
-    #     model.add(tf.keras.layers.BatchNormalization())
-    model.add(tf.keras.layers.Dropout(dropout_prob))
 
-    model.add(tf.keras.layers.Conv2D(16, kernel_size=(3, 3), padding='same', activation='relu'))
+    model.add(tf.keras.layers.Conv2D(32, kernel_size=(3, 3),
+                                     padding='same', activation='relu'))
     model.add(tf.keras.layers.MaxPool2D(pool_size=(2, 2)))
+    
     model.add(tf.keras.layers.BatchNormalization())
     model.add(tf.keras.layers.Dropout(dropout_prob))
 
-    model.add(tf.keras.layers.Conv2D(32, kernel_size=(3, 3), padding='same', activation='relu'))
+    model.add(tf.keras.layers.Conv2D(32, kernel_size=(3, 3),
+                                     padding='same', activation='relu'))
     model.add(tf.keras.layers.MaxPool2D(pool_size=(2, 2)))
-    #     model.add(tf.keras.layers.BatchNormalization())
-    model.add(tf.keras.layers.Dropout(dropout_prob))
 
-    model.add(tf.keras.layers.Conv2D(64, kernel_size=(3, 3), padding='same', activation='relu'))
-    model.add(tf.keras.layers.MaxPool2D(pool_size=(2, 2)))
-    model.add(tf.keras.layers.BatchNormalization())
+    # model.add(tf.keras.layers.Conv2D(64, kernel_size=(3, 3),
+    #                                  padding='same', activation='relu'))
+    # model.add(tf.keras.layers.MaxPool2D(pool_size=(2, 2)))
+    
+    # model.add(tf.keras.layers.BatchNormalization())
     model.add(tf.keras.layers.Dropout(dropout_prob))
 
     model.add(tf.keras.layers.Flatten())
@@ -44,19 +45,19 @@ def create_model_Conv2D(INPUT_SHAPE, OUT_SHAPE, dropout_prob=0.3):
 
 
 if __name__ == '__main__':
-    _model_def = model_def()
+    _model_def = ModelDef()
     np.random.seed(_model_def.random_seed)
 
     x_data = np.load("X.npy")
     y_data = np.load("Y.npy")
     y_data = tf.keras.utils.to_categorical(y_data, num_classes=_model_def.OUT_SHAPE)
 
-    epochs = 75
+    epochs = 50
     batch_size = 32
 
     print('---------------------------')
-    print('X Shape: ', x_data.shape)
-    print('Y Shape: ', y_data.shape)
+    print('X.Shape: ', x_data.shape)
+    print('Y.Shape: ', y_data.shape)
     print('---------------------------')
 
     model = create_model_Conv2D(INPUT_SHAPE=_model_def.INPUT_SHAPE,

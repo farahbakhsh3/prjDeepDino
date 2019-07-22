@@ -11,24 +11,41 @@ class Sample:
     IMG_H = 180
     IMG_D = 1
 
-    IMG_Crop_X = (230, 810)
-    IMG_Crop_Y = (10, 1660)
+    # ▲ X
+    # │
+    # │
+    # └───────► Y
+    # IMG_Crop_X = (x1, x2) #(from, to)
+    # IMG_Crop_Y = (y1, y2) #(from, to)
+    IMG_Crop_X = (200, 700)
+    IMG_Crop_Y = (10, 1580)
 
-class model_def:
+
+class ModelDef:
     def __init__(self):
         self.random_seed = 7
         self.game = 'Dino'
-        self.OUT_SHAPE = 3        
-        print('---------------------------')
-        print('Game: ', self.game, ' Selected.')
-        print('---------------------------')
         self.INPUT_SHAPE = (Sample.IMG_H, Sample.IMG_W, Sample.IMG_D)
+        self.OUT_SHAPE = 3
         self.weights_file = self.game + '.h5'
         self.data_fldr = './Data/'
+        self.need_crop = False
+
+        print('---------------------------')
+        print('Random seed: ', self.random_seed)
+        print('Game: ', self.game, ' Selected.')
+        print('INPUT SHAPE: ', self.INPUT_SHAPE)
+        print('OUT SHAPE: ', self.OUT_SHAPE)
+        print('Weights file: ', self.weights_file)
+        print('Data folder: ', self.data_fldr)
+        print('Need crop images: ', self.need_crop)
+        print('---------------------------')
+        print()
+
 
 def resize_image(img):
     # img = img[Sample.IMG_Crop_X[0]:Sample.IMG_Crop_X[1], Sample.IMG_Crop_Y[0]:Sample.IMG_Crop_Y[1]]
-    img = resize(img, (Sample.IMG_H, Sample.IMG_W), mode='reflect')
+    img = resize(img, (Sample.IMG_H, Sample.IMG_W), mode='reflect', anti_aliasing=True)
     img = rgb2gray(img)
     img = img.astype('float16')
     img = img.reshape((Sample.IMG_H, Sample.IMG_W, Sample.IMG_D))
@@ -36,23 +53,22 @@ def resize_image(img):
 
 
 def prepare():
-
     X = []
     Y = []
 
-    Data_folder_path = m_model_def.data_fldr
-    folders = os.listdir(Data_folder_path)
+    data_folder_path = m_model_def.data_fldr
+    folders = os.listdir(data_folder_path)
     print('Total Folders: ', len(folders))
     try:
         for folder in folders:
             print('Folder: ', folder)
-            pics = os.listdir(Data_folder_path + folder)
+            pics = os.listdir(data_folder_path + folder)
             for pic in tqdm(pics):
-                image = imread(Data_folder_path + folder + '/' + pic)
+                image = imread(data_folder_path + folder + '/' + pic)
                 vec = resize_image(image)
                 X.append(vec)
                 Y.append(pic.split('.')[1])
-    except:
+    except KeyboardInterrupt:
         pass
 
     X = np.asarray(X)
@@ -68,5 +84,5 @@ def prepare():
 
 
 if __name__ == '__main__':
-    m_model_def = model_def()
+    m_model_def = ModelDef()
     prepare()

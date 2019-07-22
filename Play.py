@@ -1,12 +1,12 @@
 import numpy as np
-from Train import create_model_Conv2D
-from Prepare import model_def, resize_image
 from PIL import ImageGrab
 import win32com.client as comclt
+from Train import create_model_Conv2D
+from Prepare import ModelDef, resize_image, Sample
 
 
 class Actor(object):
-    
+
     def __init__(self):
         self.model = create_model_Conv2D(m_model_def.INPUT_SHAPE, m_model_def.OUT_SHAPE)
         self.model.load_weights(m_model_def.weights_file)
@@ -23,12 +23,16 @@ class Actor(object):
 
 if __name__ == '__main__':
     wsh = comclt.Dispatch("WScript.Shell")
-    m_model_def = model_def()
+    m_model_def = ModelDef()
     actor = Actor()
     num_step = 10000
     try:
         for step in range(num_step):
-            obs = np.array(ImageGrab.grab())
+            obs = ImageGrab.grab(bbox=(Sample.IMG_Crop_Y[0],
+                                       Sample.IMG_Crop_X[0],
+                                       Sample.IMG_Crop_Y[1],
+                                       Sample.IMG_Crop_X[1]))
+            obs = np.array(obs)
             action = actor.get_action(obs)
             for _ in range(1):
                 if action == 0:
@@ -37,8 +41,9 @@ if __name__ == '__main__':
                     wsh.SendKeys('{UP}')
                 elif action == 2:
                     wsh.SendKeys('{DOWN}')
-    except:
+    except KeyboardInterrupt:
         pass
 
+    print()
+    print('--------------')
     print('Play finished.')
-
